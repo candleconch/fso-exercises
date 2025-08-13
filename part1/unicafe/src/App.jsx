@@ -3,20 +3,28 @@ const Button = ({rating,  onClick}) => {
   return <button onClick={onClick}>{rating}</button>
 }
 const StatisticLine = ({text, value}) => {
-  return <p>{text} {value}</p>
+  return (
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
+  );
 }
 
 const Statistics = ({good, neutral, bad, sum, average, positive}) => {
   if (sum === 0) {
     return <p>No feedback given</p>
   }
-  return <>
+  return (
+  <table>
+    <tbody>
     <StatisticLine text="good" value={good}/>
     <StatisticLine text="neutral" value={neutral}/>
     <StatisticLine text="bad" value={bad}/>
     <StatisticLine text="average" value={average}/>
     <StatisticLine text="positive" value={positive}/>
-</>
+    </tbody>
+</table>);
 }
 const App = () => {
   // save clicks of each button to its own state
