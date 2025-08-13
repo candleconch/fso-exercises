@@ -2,7 +2,11 @@ import { useState } from 'react'
 const Button = ({rating,  onClick}) => {
   return <button onClick={onClick}>{rating}</button>
 }
+
 const Statistics = ({good, neutral, bad, sum, average, positive}) => {
+  if (sum === 0) {
+    return <p>No feedback given</p>
+  }
   return <>
     <p>good {good}</p>
     <p>neutral {neutral}</p>
