@@ -6,11 +6,17 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('')
   const handleSubmit =(e) => {
-    if (newName.trim().length === 0) {
       e.preventDefault();
+    if (newName.trim().length === 0) {
       return;
     }
-    e.preventDefault();
+    const names = persons.map(p => p.name)
+    console.log(names)
+    if (names.includes(newName)){
+      alert(`${newName} is already added to phonebook`)
+      setNewName('');
+      return;
+    }
     setPersons(persons.concat({name: newName}));
     setNewName('');
   }
