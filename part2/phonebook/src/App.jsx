@@ -9,7 +9,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
-  
+  const baseUrl = 'http://localhost:3001/persons'
   const hook = () => {
     console.log('effect activated');
     axios
@@ -36,7 +36,7 @@ const App = () => {
   }
   const handleSubmit =(e) => {
       e.preventDefault();
-    if (newName.trim().length === 0) {
+    if (newName.trim().length === 0 || newNumber.trim().length === 0) {
       return;
     }
     const names = persons.map(p => p.name)
@@ -46,6 +46,10 @@ const App = () => {
       setNewNumber('');
       return;
     }
+    axios
+    .post(baseUrl,{name:newName, number: newNumber})
+    .then(response => console.log(response)
+    )
     setPersons(persons.concat({name: newName, number: newNumber}));
     setNewName('');
     setNewNumber('');
