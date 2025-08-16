@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios';
 import SearchFilter from './components/SearchFilter'
 import Form from './components/Form'
 import Phonebook from './components/Phonebook'
+import personService from './services/persons';
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,14 +12,13 @@ const App = () => {
   const baseUrl = 'http://localhost:3001/persons'
   const hook = () => {
     console.log('effect activated');
-    axios
-      .get('/persons')
-      .then(response => {
+    personService
+      .getEntries(baseUrl)
+      .then(data => {
         console.log('fulfilled');
-        setPersons(response.data)
+        setPersons(data)
       })
       .catch(reason => {
-        debugger;
         console.log(reason)})
   }
 
@@ -46,11 +45,10 @@ const App = () => {
       setNewNumber('');
       return;
     }
-    axios
-    .post(baseUrl,{name:newName, number: newNumber})
-    .then(response => console.log(response)
-    )
-    setPersons(persons.concat({name: newName, number: newNumber}));
+    personService
+    .makeEntry(newName, newNumber)
+    .then(response => setPersons(persons.concat(response)))
+    
     setNewName('');
     setNewNumber('');
   }
