@@ -10,7 +10,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
   const baseUrl = 'http://localhost:3001/persons'
-  const hook = () => {
+
+  useEffect(() => {
     console.log('effect activated');
     personService
       .getEntries(baseUrl)
@@ -20,9 +21,7 @@ const App = () => {
       })
       .catch(reason => {
         console.log(reason)})
-  }
-
-  useEffect(hook, []);
+    },[])
 
   const handleChange = (value) => {
     if (value === 'name'){
@@ -34,17 +33,35 @@ const App = () => {
     }
   }
   const handleSubmit =(e) => {
-      e.preventDefault();
+    e.preventDefault();
     if (newName.trim().length === 0 || newNumber.trim().length === 0) {
       return;
     }
-    const names = persons.map(p => p.name)
-    if (names.includes(newName)){
-      alert(`${newName} is already added to phonebook`)
-      setNewName('');
-      setNewNumber('');
+
+      const sameNameExists = (person) => {
+        return person.name === newName
+      }
+    if (persons.find(sameNameExists)){
+      console.log('already added, updating...')
+      
+      const updateHuh = confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      if (!updateHuh) {
+        setNewName('');
+        setNewNumber('');
+        return;
+      }
+      const person = persons.find(sameNameExists)
+      
+      personService
+      .updateEntry(person.id, person,newNumber)
+      .then(response => {
+        console.log(response)
+        
+        setPersons(persons.map(p => p.id === person.id ? response : p))
+      })
       return;
     }
+
     personService
     .makeEntry(newName, newNumber)
     .then(response => setPersons(persons.concat(response)))

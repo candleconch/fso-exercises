@@ -11,6 +11,10 @@ const makeEntry = (name, number) => {
     return request.then(response => response.data);
     
 }
+const updateEntry = (id, person, newNumber) => {
+    const request = axios.put(`${baseUrl}/${id}`, {...person, number: newNumber});
+    return request.then(response => response.data);
+}
 const deleteEntry = (id) => {
     const request = axios.delete(`${baseUrl}/${id}`);
     return request.then(response => response.data);
@@ -20,5 +24,6 @@ const deleteEntry = (id) => {
 export default {
     makeEntry,
     getEntries,
+    updateEntry,
     deleteEntry
 };
