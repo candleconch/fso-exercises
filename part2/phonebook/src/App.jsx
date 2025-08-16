@@ -52,6 +52,19 @@ const App = () => {
     setNewName('');
     setNewNumber('');
   }
+  const deletePerson = (id) => {
+    const deleteHuh = window.confirm('Delete this entry?')
+    if (!deleteHuh) return;
+
+    personService
+    .deleteEntry(id)
+    .then(response => {
+      const filtered = persons.filter(p => p.id !== response.id)
+      setPersons(filtered);
+    })
+    }
+    
+  
   const shown = persons.filter(p => {
     if (filter.trim().length > 0) {
       return p.name.toLowerCase().includes(filter)
@@ -71,7 +84,7 @@ const App = () => {
         handleNumberChange={handleChange('number')}
         />
       <h2>Numbers</h2>
-      <Phonebook persons={shown}/>
+      <Phonebook shown={shown} deletePerson={deletePerson}/>
     </div>
   )
 }

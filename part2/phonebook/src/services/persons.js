@@ -11,8 +11,14 @@ const makeEntry = (name, number) => {
     return request.then(response => response.data);
     
 }
+const deleteEntry = (id) => {
+    const request = axios.delete(`${baseUrl}/${id}`);
+    return request.then(response => response.data);
+
+}
 
 export default {
     makeEntry,
-    getEntries
+    getEntries,
+    deleteEntry
 };
