@@ -6,14 +6,16 @@ import personService from './services/persons';
 
 const Notification = ({message}) => {
   if (message===null) return null;
-  return <div className="success">{message}</div>
+  const hasSucceeded = message[0] !== 'I'
+  const appearance = hasSucceeded ? 'success' : 'failure';
+  return <div className={appearance}>{message}</div>
 }
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const baseUrl = 'http://localhost:3001/persons'
 
   useEffect(() => {
@@ -60,12 +62,19 @@ const App = () => {
       personService
       .updateEntry(person.id, person,newNumber)
       .then(response => {
-        console.log(response)
-        setPersons(persons.map(p => p.id === person.id ? response : p))
-        setSuccessMessage(`Updated number for ${person.name}`)
+        //console.log(response);
+        setPersons(persons.map(p => p.id === person.id ? response : p));
+        setMessage(`Updated number for ${person.name}`);
+        setNewName('');
+        setNewNumber('');
         setTimeout(() => {
-          setSuccessMessage(null)
+          setMessage(null)
         }, 3000);
+      })
+      .catch(error => {
+        setMessage(`Information of ${newName} has already been removed from the server`)
+        console.log(error)
+        
       })
       return;
     }
@@ -74,9 +83,9 @@ const App = () => {
     .makeEntry(newName, newNumber)
     .then(response => {
       setPersons(persons.concat(response))
-      setSuccessMessage(`Added ${newName}`)
+      setMessage(`Added ${newName}`)
       setTimeout(() => {
-        setSuccessMessage(null)
+        setMessage(null)
       }, 3000);
   })
     
@@ -104,7 +113,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={successMessage}/>
+      <Notification message={message}/>
       <SearchFilter filter={filter} onChange={handleChange('filter')}/>
       <h2>add a new</h2>
       <Form
