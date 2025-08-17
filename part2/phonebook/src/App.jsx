@@ -4,11 +4,16 @@ import Form from './components/Form'
 import Phonebook from './components/Phonebook'
 import personService from './services/persons';
 
+const Notification = ({message}) => {
+  if (message===null) return null;
+  return <div className="success">{message}</div>
+}
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null)
   const baseUrl = 'http://localhost:3001/persons'
 
   useEffect(() => {
@@ -56,15 +61,24 @@ const App = () => {
       .updateEntry(person.id, person,newNumber)
       .then(response => {
         console.log(response)
-        
         setPersons(persons.map(p => p.id === person.id ? response : p))
+        setSuccessMessage(`Updated number for ${person.name}`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000);
       })
       return;
     }
 
     personService
     .makeEntry(newName, newNumber)
-    .then(response => setPersons(persons.concat(response)))
+    .then(response => {
+      setPersons(persons.concat(response))
+      setSuccessMessage(`Added ${newName}`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 3000);
+  })
     
     setNewName('');
     setNewNumber('');
@@ -81,7 +95,6 @@ const App = () => {
     })
     }
     
-  
   const shown = persons.filter(p => {
     if (filter.trim().length > 0) {
       return p.name.toLowerCase().includes(filter)
@@ -91,6 +104,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={successMessage}/>
       <SearchFilter filter={filter} onChange={handleChange('filter')}/>
       <h2>add a new</h2>
       <Form
