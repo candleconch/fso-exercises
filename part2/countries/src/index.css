@@ -1,0 +1,16 @@
+ul {
+    list-style-type: none;
+}
+
+button, p {
+    margin: 0.2em;
+    display: inline-block;
+}
+
+img {
+    border: 2px solid gray;
+}
+
+.info-message {
+    display: block;
+}

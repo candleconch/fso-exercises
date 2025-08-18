@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from 'axios';
-import "./App.css";
+import countryServices from './services/countries';
 const Input = ({value, onChange}) => {
-  console.log(value)
   
   return (
     <>
@@ -16,7 +14,6 @@ const Input = ({value, onChange}) => {
 
 const Country = ({country}) => {
   if (Object.keys(country).length === 0) return null;
-  console.log(country)
   
   return (
   <div className="country">
@@ -29,20 +26,28 @@ const Country = ({country}) => {
         return <li key={l}>{l}</li>
       })}
     </ul>
-    <img src={country.flags["svg"]}/>
+    <img src={country.flags["svg"]} alt={`${country.name.common}'s flag`} width='400px'/>
   </div>
   )
 }
-const Output = ({ countries, country }) => {
+const Output = ({ countries, country, showUnique }) => {
   const multipleCountries = (<div>
       {countries.map((country) => {
-        return <p key={country.name.official}>{country.name.common}</p>;
+        return (
+        <div key={country.name.official}>
+          <p>{country.name.common}</p>
+          <button onClick={() => showUnique(countries, country.name.common)}>Show</button>
+        </div>
+        )
       })}
     </div>);
+
     const output = countries.length > 1 ? multipleCountries
     : <Country country={country}/>
+    console.log('Output runs...',countries, country, output);
+    
   return countries.length > 10 ? (
-    <p>Too many matches, specify another filter</p>
+    <p className="info-message">Too many matches, specify another filter</p>
   ) : output;
 };
 function App() {
@@ -52,44 +57,46 @@ function App() {
   const [shown, setShown] = useState([]);
   
   useEffect(()=>{
-    axios.get("https://studies.cs.helsinki.fi/restcountries/api/all")
+    countryServices.getAll()
     .then(response => {
-      //console.log(response.data)
-      setCountries(response.data)
-      
+      setCountries(response)
     })
   
   },[]);
 
   useEffect(() => {
     if (shown.length === 1) {
-      console.log('requesting ', shown[0].name.common)
       const countryName = shown[0].name.common;
-      axios.get(`https://studies.cs.helsinki.fi/restcountries/api/name/${countryName}`)
+      countryServices.getOne(countryName)
       .then(response => {
-       // console.log(response.data)
-        
-        setCountry(response.data)
+        setCountry(response)
     })
   } else {
     setCountry({})
   }
   },[shown])
 
-    const handleChange = (e) => {
-    const newValue = e.target.value;
-    setQuery(newValue);
-    if (newValue.trim() === "") {
-      setShown([]);
-      return;
-    }
-    setShown(countries.filter(country => country.name.common.toLowerCase().includes(newValue)))
-  };
+  const handleChange = (e) => {
+  const newValue = e.target.value;
+  setQuery(newValue);
+  if (newValue.trim() === "") {
+    setShown([]);
+    return;
+  }
+  setShown(countries.filter(country => country.name.common.toLowerCase().includes(newValue)))
+};
+
+  const showUnique = (countries, countryName) => {
+    setShown(countries.filter(country => country.name.common === countryName))
+    console.log('showUnique runs...', countries, countryName)
+    
+  }
+
   return (
     <>
       <Input value={query} onChange={handleChange} />
       {query ?
-      <Output countries={shown} country={country}/> : <p>Country info will show up here.</p>}
+      <Output countries={shown} country={country} showUnique={showUnique}/> : <p className="info-message">Country info will show up here.</p>}
     </>
   );
 }
