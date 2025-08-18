@@ -14,3 +14,8 @@ img {
 .info-message {
     display: block;
 }
+
+.icon {
+    border-radius: 1.2em;
+    border-color: dodgerblue;
+}

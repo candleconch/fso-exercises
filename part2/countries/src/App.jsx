@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import countryServices from './services/countries';
+import weatherServices from './services/weather';
+
 const Input = ({value, onChange}) => {
   
   return (
@@ -12,7 +14,7 @@ const Input = ({value, onChange}) => {
   );
 };
 
-const Country = ({country}) => {
+const Country = ({country, wind, temp, icon}) => {
   if (Object.keys(country).length === 0) return null;
   
   return (
@@ -27,10 +29,14 @@ const Country = ({country}) => {
       })}
     </ul>
     <img src={country.flags["svg"]} alt={`${country.name.common}'s flag`} width='400px'/>
+    <h2>Weather in {country.capital[0]}</h2>
+    <p className="info-message">Temperature: {temp} deg Celsius</p>
+    <img className="icon" src={`https://openweathermap.org/img/wn/${icon}@2x.png`}/>
+    <p className="info-message">Wind: {wind} m/s</p>
   </div>
   )
 }
-const Output = ({ countries, country, showUnique }) => {
+const Output = ({ countries, country, showUnique, temperature, icon, wind }) => {
   const multipleCountries = (<div>
       {countries.map((country) => {
         return (
@@ -43,8 +49,8 @@ const Output = ({ countries, country, showUnique }) => {
     </div>);
 
     const output = countries.length > 1 ? multipleCountries
-    : <Country country={country}/>
-    console.log('Output runs...',countries, country, output);
+    : <Country country={country} wind={wind} temp={temperature} icon={icon}/>
+    //console.log('Output runs...',countries, country, output);
     
   return countries.length > 10 ? (
     <p className="info-message">Too many matches, specify another filter</p>
@@ -55,6 +61,9 @@ function App() {
   const [country, setCountry] = useState({})
   const [query, setQuery] = useState("");
   const [shown, setShown] = useState([]);
+  const [temperature, setTemperature] = useState('')
+  const [icon, setIcon] = useState('');
+  const [windSpeed, setWindSpeed] = useState(0);
   
   useEffect(()=>{
     countryServices.getAll()
@@ -76,6 +85,18 @@ function App() {
   }
   },[shown])
 
+  // fetching weather data
+  useEffect(() => {
+    if (Object.keys(country).length === 0) return;
+    debugger;
+    weatherServices.getWeather(country)
+    .then(response => {
+      setTemperature(response.main.temp)
+      setIcon(response.weather[0].icon)
+      setWindSpeed(response.wind.speed)
+    })
+  },[country])
+
   const handleChange = (e) => {
   const newValue = e.target.value;
   setQuery(newValue);
@@ -88,7 +109,7 @@ function App() {
 
   const showUnique = (countries, countryName) => {
     setShown(countries.filter(country => country.name.common === countryName))
-    console.log('showUnique runs...', countries, countryName)
+    //console.log('showUnique runs...', countries, countryName)
     
   }
 
@@ -96,7 +117,14 @@ function App() {
     <>
       <Input value={query} onChange={handleChange} />
       {query ?
-      <Output countries={shown} country={country} showUnique={showUnique}/> : <p className="info-message">Country info will show up here.</p>}
+      <Output 
+        countries={shown} 
+        country={country}
+        showUnique={showUnique}
+        temperature={temperature}
+        icon={icon}
+        wind={windSpeed}/>
+       : <p className="info-message">Country info will show up here.</p>}
     </>
   );
 }
