@@ -88,7 +88,6 @@ function App() {
   // fetching weather data
   useEffect(() => {
     if (Object.keys(country).length === 0) return;
-    debugger;
     weatherServices.getWeather(country)
     .then(response => {
       setTemperature(response.main.temp)
