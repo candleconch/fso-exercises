@@ -26,13 +26,19 @@ const entries = [
 ]
 
 app.get('/', (req, res) => {
-    //console.log('request',req,'response',res)
     res.send('<h1>Hi there</h1>')
 })
 
 app.get('/entries', (req, res) => {
     res.json(entries);
 
+})
+
+app.get('/info', (req, res) => {
+  res.send(
+    `<p>Phonebook has info for ${entries.length} people</p>
+     <p>${new Date(Date.now()).toString()}</p>` 
+  )
 })
 const PORT = 3001;
 app.listen(PORT,() => {
