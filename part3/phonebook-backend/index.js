@@ -58,6 +58,21 @@ app.delete('/api/persons/:id', (req, res) => {
     persons = persons.filter(p => p.id !== id)
     res.status(204).end();
 })
+
+app.post('/api/persons', (req, res) => {
+  const content = req.body;
+  const id = Math.floor(Math.random() * 100000).toString();
+  content.id = id;
+  if (!persons.find(p => p.id === id)
+  && content.name.trim().length > 0
+  && content.number.trim().length > 0){
+    persons = persons.concat(content)
+    res.json(content);
+  } else {
+      res.status(400);
+      return res.json({"error": "name must be unique"})
+  }
+})
 const PORT = 3001;
 app.listen(PORT,() => {
     console.log(`Server running on port ${PORT}`)
