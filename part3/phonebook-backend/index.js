@@ -1,7 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express();
-
+app.use(express.static('dist'))
 app.use(express.json());
 morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
     res.send('<h1>Hi there</h1>')
 })
 
-app.get('/api/persons', (req, res) => {
+app.get('/persons', (req, res) => {
     res.json(persons);
 
 })
@@ -46,7 +46,7 @@ app.get('/info', (req, res) => {
   )
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/persons/:id', (req, res) => {
   const id = req.params.id;
   const person = persons.find(p => p.id === id)
   if (person) {
@@ -57,14 +57,14 @@ app.get('/api/persons/:id', (req, res) => {
   }
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/persons/:id', (req, res) => {
     const id = req.params.id;
 
     persons = persons.filter(p => p.id !== id)
     res.status(204).end();
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/persons', (req, res) => {
   const content = req.body;
   const id = Math.floor(Math.random() * 100000).toString();
   content.id = id;
@@ -78,7 +78,7 @@ app.post('/api/persons', (req, res) => {
       return res.json({"error": "name must be unique"})
   }
 })
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT,() => {
     console.log(`Server running on port ${PORT}`)
 })
