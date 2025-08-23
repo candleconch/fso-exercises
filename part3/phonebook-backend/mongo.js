@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const name = process.argv[3];
 const number = process.argv[4];
 const password = process.argv[2];
-const uri = `mongodb+srv://candleconch:${password}@cluster0.x4k7oev.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`;
+const url = `mongodb+srv://candleconch:${password}@cluster0.x4k7oev.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`;
 //let persons = [
     //{ 
       //"name": "Arto Hellas", 
@@ -34,7 +34,7 @@ const person = new Person({
     number
 });
 
-mongoose.connect(uri);
+mongoose.connect(url);
 
 if (!process.argv[3] || !process.argv[4]){
 
