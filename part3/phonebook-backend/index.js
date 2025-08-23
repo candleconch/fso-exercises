@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
     res.send('<h1>Hi there</h1>')
 })
 
-app.get('/persons', (req, res) => {
+app.get('/api/persons', (req, res) => {
     res.json(persons);
 
 })
@@ -49,7 +49,7 @@ app.get('/info', (req, res) => {
   )
 })
 
-app.get('/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id;
   const person = persons.find(p => p.id === id)
   if (person) {
@@ -60,14 +60,14 @@ app.get('/persons/:id', (req, res) => {
   }
 })
 
-app.delete('/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res) => {
     const id = req.params.id;
 
     persons = persons.filter(p => p.id !== id)
     res.status(204).end();
 })
 
-app.post('/persons', (req, res) => {
+app.post('/api/persons', (req, res) => {
   const content = req.body;
   const id = Math.floor(Math.random() * 100000).toString();
   content.id = id;

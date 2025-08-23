@@ -16,7 +16,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
   const [message, setMessage] = useState(null)
-  const baseUrl = 'http://localhost:3001/persons'
+  const baseUrl = '/api/persons'
 
   useEffect(() => {
     console.log('effect activated');
