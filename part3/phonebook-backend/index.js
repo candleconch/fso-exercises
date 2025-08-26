@@ -50,7 +50,18 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   const content = req.body;
-  
+  Person({
+    name: content.name,
+    number: content.number
+  })
+  .save()
+  .then(result => {
+    res.json(result)
+  })
+  .catch(err => {
+    console.log('something went wrong:', err);
+    
+  })
   //const id = Math.floor(Math.random() * 100000).toString();
   //content.id = id;
   //if (!persons.find(p => p.id === id)
