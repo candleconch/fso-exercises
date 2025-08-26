@@ -13,20 +13,21 @@ morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 //app.use(morgan('tiny'));
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (req, res, next) => {
     Person.find({}).then(persons => {
         console.log(persons)
         res.json(persons);
     })
+    .catch(err => next(err))
 
 })
 
-app.get('/info', (req, res) => {
-  res.send(
-    `<p>Phonebook has info for ${persons.length} people</p>
-     <p>${new Date(Date.now()).toString()}</p>` 
-  )
-})
+//app.get('/info', (req, res) => {
+  //res.send(
+    //`<p>Phonebook has info for ${persons.length} people</p>
+     //<p>${new Date(Date.now()).toString()}</p>` 
+  //)
+//})
 
 app.get('/api/persons/:id', (req, res, next) => {
   const id = req.params.id;
@@ -38,30 +39,47 @@ app.get('/api/persons/:id', (req, res, next) => {
     .catch(err => next(err))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndDelete(req.params.id)
     .then(result => {
       res.json(result);
-      return res.status(204).end();
     })
     .catch(err => next(err));
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const content = req.body;
   Person({
     name: content.name,
     number: content.number
   })
   .save()
-  .then(result => {
-    res.json(result)
+  .then(savedPerson => {
+    res.json(savedPerson)
   })
   .catch(err => {
     console.log('something went wrong:', err);
     next(err);
     
   })
+})
+app.put('/api/persons/:id', (req, res, next) => {
+    const {name, number} = req.body;
+    Person.findById(req.params.id)
+    .then(person => {
+      if (!person) {
+        return res.json(404).end();
+      }
+      person.name = name;
+      person.number = number;
+
+      return person.save().then(updatedPerson => {
+        res.json(updatedPerson);
+      })
+    })
+    .catch(err => next(err));
+  })
+
   const unknownEndpoint = (req,res) => {
     return res.status(404).send({error: 'unkown endpoint'})
   }
@@ -71,7 +89,7 @@ app.post('/api/persons', (req, res) => {
   const errorHandler = (error, req, res, next) => {
     console.log(error.message)
 
-    if (error.name = 'CastError'){
+    if (error.name === 'CastError'){
       return res.status(400).send({error: 'malformatted id'})
     }
     
@@ -91,7 +109,7 @@ app.post('/api/persons', (req, res) => {
       //res.status(400);
       //return res.json({"error": "name must be unique"})
   //}
-})
+//})
 const PORT = process.env.PORT;
 app.listen(PORT,() => {
     console.log(`Server running on port ${PORT}`)

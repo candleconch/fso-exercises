@@ -62,7 +62,7 @@ const App = () => {
       .updateEntry(person.id, person,newNumber)
       .then(response => {
         //console.log(response);
-        setPersons(persons.map(p => p.id === person.id ? response : p));
+        setPersons(persons => persons.map(p => p.id === person.id ? response : p));
         setMessage(`Updated number for ${person.name}`);
         setNewName('');
         setNewNumber('');
@@ -81,7 +81,7 @@ const App = () => {
     personService
     .makeEntry(newName, newNumber)
     .then(response => {
-      setPersons(persons.concat(response))
+      setPersons(p => p.concat(response))
       setMessage(`Added ${newName}`)
       setTimeout(() => {
         setMessage(null)
