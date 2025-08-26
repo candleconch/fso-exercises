@@ -6,7 +6,7 @@ import personService from './services/persons';
 
 const Notification = ({message}) => {
   if (message===null) return null;
-  const hasSucceeded = message[0] !== 'I'
+  const hasSucceeded = message[0] === 'A'
   const appearance = hasSucceeded ? 'success' : 'failure';
   return <div className={appearance}>{message}</div>
 }
@@ -86,7 +86,13 @@ const App = () => {
       setTimeout(() => {
         setMessage(null)
       }, 3000);
-  })
+    })
+    .catch(error => {
+      //console.log(error.response.data.error)
+      setMessage(error.response.data.error);
+      setTimeout(() => setMessage(null), 3000)
+      
+    })
     
     setNewName('');
     setNewNumber('');
