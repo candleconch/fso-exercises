@@ -1,7 +1,8 @@
 import axios from "axios";
+const baseUrl = '/api/persons'
 
-const getEntries = (url) => {
-    const request = axios.get(url);
+const getEntries = () => {
+    const request = axios.get(baseUrl);
     return request.then(response => response.data);
 }
 const makeEntry = (name, number) => {
@@ -9,7 +10,7 @@ const makeEntry = (name, number) => {
     return request.then(response => response.data);
     
 }
-const updateEntry = (id, person, newNumber) => {
+const updateEntry = ( id, person, newNumber) => {
     const request = axios.put(`${baseUrl}/${id}`, {...person, number: newNumber});
     return request.then(response => response.data);
 }

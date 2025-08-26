@@ -16,12 +16,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
   const [message, setMessage] = useState(null)
-  const baseUrl = '/api/persons'
 
   useEffect(() => {
     console.log('effect activated');
     personService
-      .getEntries(baseUrl)
+      .getEntries()
       .then(data => {
         console.log('fulfilled');
         setPersons(data)
