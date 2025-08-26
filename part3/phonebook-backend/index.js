@@ -13,10 +13,6 @@ morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 //app.use(morgan('tiny'));
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hi there</h1>')
-})
-
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
         console.log(persons)
@@ -34,13 +30,15 @@ app.get('/info', (req, res) => {
 
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id;
-  const person = persons.find(p => p.id === id)
-  if (person) {
-    res.json(person)
-  } else {
-    res.statusMessage = 'Requested entry not found'
-    res.status(404).end();
-  }
+  Person.findById(id)
+    .then(person => {
+      res.json(person)
+      }
+    )
+    .catch(err => {
+      res.StatusMessage = err;
+      res.status(404).end();
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -52,17 +50,18 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   const content = req.body;
-  const id = Math.floor(Math.random() * 100000).toString();
-  content.id = id;
-  if (!persons.find(p => p.id === id)
-  && content.name.trim().length > 0
-  && content.number.trim().length > 0){
-    persons = persons.concat(content)
-    res.json(content);
-  } else {
-      res.status(400);
-      return res.json({"error": "name must be unique"})
-  }
+  
+  //const id = Math.floor(Math.random() * 100000).toString();
+  //content.id = id;
+  //if (!persons.find(p => p.id === id)
+  //&& content.name.trim().length > 0
+  //&& content.number.trim().length > 0){
+    //persons = persons.concat(content)
+    //res.json(content);
+  //} else {
+      //res.status(400);
+      //return res.json({"error": "name must be unique"})
+  //}
 })
 const PORT = process.env.PORT;
 app.listen(PORT,() => {
