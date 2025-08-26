@@ -28,17 +28,14 @@ app.get('/info', (req, res) => {
   )
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
   const id = req.params.id;
   Person.findById(id)
     .then(person => {
       res.json(person)
       }
     )
-    .catch(err => {
-      res.StatusMessage = err;
-      res.status(404).end();
-    })
+    .catch(err => next(err))
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -62,8 +59,27 @@ app.post('/api/persons', (req, res) => {
   })
   .catch(err => {
     console.log('something went wrong:', err);
+    next(err);
     
   })
+  const unknownEndpoint = (req,res) => {
+    return res.status(404).send({error: 'unkown endpoint'})
+  }
+
+  app.use(unknownEndpoint);
+
+  const errorHandler = (error, req, res, next) => {
+    console.log(error.message)
+
+    if (error.name = 'CastError'){
+      return res.status(400).send({error: 'malformatted id'})
+    }
+    
+    next(error);
+  }
+  
+  app.use(errorHandler);
+
   //const id = Math.floor(Math.random() * 100000).toString();
   //content.id = id;
   //if (!persons.find(p => p.id === id)
