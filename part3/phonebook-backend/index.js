@@ -22,12 +22,16 @@ app.get('/api/persons', (req, res, next) => {
 
 })
 
-//app.get('/info', (req, res) => {
-  //res.send(
-    //`<p>Phonebook has info for ${persons.length} people</p>
-     //<p>${new Date(Date.now()).toString()}</p>` 
-  //)
-//})
+app.get('/info', (req, res, next) => {
+  Person.find({})
+  .then(persons => 
+    res.send(
+      `<p>Phonebook has info for ${persons.length} people</p>
+      <p>${new Date(Date.now()).toString()}</p>` 
+    )
+  )
+  .catch(err => next(err))
+})
 
 app.get('/api/persons/:id', (req, res, next) => {
   const id = req.params.id;
