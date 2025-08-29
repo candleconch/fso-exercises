@@ -1,8 +1,8 @@
-POST http://localhost:3003/api/blogs
+POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Looking for hope",
+    "title": "Looking for strength",
     "author": "anxiouspen",
     "url": "http://example.com",
     "likes": 1
