@@ -4,4 +4,11 @@ const dummy = (blogs) => {
 const totalLikes = (posts) => {
     return posts.reduce((a,b) => a + b.likes, 0);
 }
-module.exports = { dummy, totalLikes}
+
+const favoriteBlog = (blogs) => {
+    if (blogs.length === 0) return null;
+    const likes = blogs.map(b => b.likes);
+
+    return blogs.find(b => b.likes === Math.max(...likes));
+}
+module.exports = { dummy, totalLikes, favoriteBlog}

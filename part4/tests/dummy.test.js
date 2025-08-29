@@ -2,14 +2,6 @@ const {test, describe} = require('node:test')
 const assert = require('assert')
 const listHelper = require('../utils/list_helper')
 
-test('dummy returns one', () => {
-    const blogs = []
-
-    const result = listHelper.dummy(blogs)
-    assert.strictEqual(result, 1)
-})
-
-describe('total likes', () => {
   const listWithOneBlog = [
     {
       _id: '5a422aa71b54a676234d17f8',
@@ -70,6 +62,14 @@ describe('total likes', () => {
     __v: 0
   }  
 ]
+test('dummy returns one', () => {
+    const blogs = []
+
+    const result = listHelper.dummy(blogs)
+    assert.strictEqual(result, 1)
+})
+
+describe('total likes', () => {
   test('when list has only one blog, equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
     assert.strictEqual(result, 5)
@@ -78,4 +78,18 @@ describe('total likes', () => {
   test('when there are multiple posts', () => {
     assert.strictEqual(listHelper.totalLikes(blogs), 36)
   })
+})
+
+describe('favorite blog', () => {
+    test('when the list is empty', () => {
+        assert.strictEqual(listHelper.favoriteBlog([]), null)
+    })
+
+    test('when the list has one blog only', () => {
+        assert.deepStrictEqual(listHelper.favoriteBlog(listWithOneBlog), listWithOneBlog[0])
+    })
+
+    test('when the list has one favorite out of many', () => {
+        assert.deepStrictEqual(listHelper.favoriteBlog(blogs), blogs[2])
+    })
 })
