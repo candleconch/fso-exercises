@@ -1,3 +1,4 @@
+const { transform } = require('lodash');
 const mongoose = require('mongoose')
 
 const blogSchema = mongoose.Schema({
@@ -7,6 +8,14 @@ const blogSchema = mongoose.Schema({
   likes: Number,
 })
 
+blogSchema.set('toJSON', {
+  transform: (_document, returnedObject ) => {
+    returnedObject.id = returnedObject._id
+    delete returnedObject._id
+
+    return returnedObject
+  }
+})
 const Blog = mongoose.model('Blog', blogSchema)
 
 
