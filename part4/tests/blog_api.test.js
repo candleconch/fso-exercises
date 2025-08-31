@@ -5,6 +5,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const { update } = require('lodash')
 
 const api = supertest(app)
 
@@ -53,7 +54,7 @@ test.only('a blog post can be added', async () => {
     assert(titles.includes('No time to study'))
 })
 
-test.only('deleting a blog post', async () => {
+test/*.only*/('deleting a blog post', async () => {
     const blogsAtStart = await helper.blogsInDb();
     const blogToDelete = blogsAtStart[0];
 
@@ -68,6 +69,61 @@ test.only('deleting a blog post', async () => {
 
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
     
+})
+
+//test.only('update existing blog entry', async () => {
+    //const blogsAtStart = await helper.blogsInDb()
+    //const toBeChanged = blogsAtStart[0]
+
+    //const updatedData = {
+        //likes: toBeChanged.likes + 1
+    //}
+    ////console.log('sending put request to id: ', toBeChanged.id)
+    ////console.log('number of likes:', toBeChanged.likes)
+    ////console.log('updated likes:', updatedData.likes)
+    
+    
+    //const response = 
+        //await api
+           //.put(`/api/blogs/${toBeChanged.id}`)
+           //.send(updatedData)
+           //.expect(200)
+           //.expect('Content-Type', /application\/json/)
+    
+    //assert.strictEqual(response.body.likes, updatedData.likes)
+
+    //const blogsAtEnd = await helper.blogsInDb()
+
+    //assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+
+    //const updatedInDb = blogsAtEnd.find(b => b.id === updatedData.id)
+    //assert.strictEqual(updatedInDb.likes, updatedData.likes)
+//})
+test.only('update existing blog entry', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const toBeChanged = blogsAtStart[0]
+
+    const updatedData = {
+        likes: toBeChanged.likes + 1
+    }
+
+    const response = await api
+        .put(`/api/blogs/${toBeChanged.id}`)
+        .send(updatedData)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.likes, updatedData.likes)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+    //console.log('blogsatend: ', blogsAtEnd)
+    
+    const updatedInDb = blogsAtEnd.find(b => b.id === toBeChanged.id)
+    //console.log(updatedInDb)
+    
+    assert.strictEqual(updatedInDb.likes, updatedData.likes)
 })
 after(async () => {
     await mongoose.connection.close();

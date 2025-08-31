@@ -10,7 +10,7 @@ const blogSchema = mongoose.Schema({
 
 blogSchema.set('toJSON', {
   transform: (_document, returnedObject ) => {
-    returnedObject.id = returnedObject._id
+    returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
 
     return returnedObject
